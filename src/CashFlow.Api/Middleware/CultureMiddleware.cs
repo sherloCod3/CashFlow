@@ -6,12 +6,12 @@ public class CultureMiddleware
 {
 	private readonly RequestDelegate _next;
 
-	public CultureMiddleware(RequestDelegate next)
+	public CultureMiddleware( RequestDelegate next )
 	{
 		_next = next;
 	}
 
-	public async Task Invoke(HttpContext context)
+	public async Task Invoke( HttpContext context )
 	{
 		var culture = context.Request.Headers.AcceptLanguage.FirstOrDefault();
 
