@@ -6,12 +6,12 @@ public class CultureMiddleware
 {
 	private readonly RequestDelegate _next;
 
-	public CultureMiddleware( RequestDelegate next )
+	public CultureMiddleware(RequestDelegate next)
 	{
 		_next = next;
 	}
 
-	public async Task Invoke( HttpContext context )
+	public async Task Invoke(HttpContext context)
 	{
 		var culture = context.Request.Headers.AcceptLanguage.FirstOrDefault();
 
@@ -19,8 +19,19 @@ public class CultureMiddleware
 
 		if (string.IsNullOrWhiteSpace(culture) == false)
 		{
-			cultureInfo = new CultureInfo(culture);
+			// Extract the first culture from the Accept-Language header (e.g., "en-US,en;q=0.9" -> "en-US")
+			var cultureName = culture.Split(',')[0].Split(';')[0].Trim();
+
+			try
+			{
+				cultureInfo = new CultureInfo(cultureName);
+			}
+			catch (CultureNotFoundException)
+			{
+				// Fallback to "en" if the provided culture is invalid or unsupported
+			}
 		}
+
 		CultureInfo.CurrentCulture = cultureInfo;
 		CultureInfo.CurrentUICulture = cultureInfo;
 
